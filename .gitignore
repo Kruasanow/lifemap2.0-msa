@@ -1,0 +1,3 @@
+backendmodule/venv/
+backendmodule/.env
+*.pbf

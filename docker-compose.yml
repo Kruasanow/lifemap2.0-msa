@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  backend:
+    build: ./backendmodule
+    container_name: backend
+    depends_on:
+      - postgresql
+    environment:
+      - DBUSER=dbuser
+      - DBPASSWORD=dbpassword
+      - DBHOST=postgresql
+      - DBPORT=5432
+      - SECRETKEY=213aqwe2134wqe
+      - DB=db
+    ports:
+      - "5050:5050"
+    networks:
+      - lifemap-network
+
+  frontend:
+    build: ./frontendmodule
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - lifemap-network
+
+  postgresql:
+    build: ./databasemodule
+    container_name: postgresql
+    ports:
+      - 2345:5432
+    networks:
+      - lifemap-network
+
+  tileserver:
+    image: overv/openstreetmap-tile-server
+    container_name: tile-c
+    ports:
+      - "5080:80"
+    volumes:
+      - osm-data:/data/database/
+    command: "run"
+
+volumes:
+  database:
+  osm-data:
+    external: true
+
+networks:
+  lifemap-network:
+    external: true
